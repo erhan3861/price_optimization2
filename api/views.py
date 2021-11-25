@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from .apps import ApiConfig
-from .data import getPriceFeatures, save_to_csv
+from .data import getPriceFeatures, save_to_csv, reset_all_the_list
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import render, HttpResponse
@@ -64,6 +64,8 @@ def getPrediction(shipping, rating_point, rating_number, seller_point, price_cla
 def get_data(request):
     # price classes are : 0-49 TL  50-99 TL ..... 450-499 TL
     price_class = 0
+    #clear all the lists for getting new csv file
+    reset_all_the_list()
 
     num_class = request.GET['number_class']
     price_ranges = request.GET['price_ranges']
