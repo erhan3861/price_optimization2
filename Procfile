@@ -1,1 +1,1 @@
-web: gunicorn price_optimization_API.wsgi --log-file -
+web: gunicorn --bind :8000 --workers 3 --threads 2 price_optimization_API.wsgi --log-file -
