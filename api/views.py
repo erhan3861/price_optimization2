@@ -55,7 +55,7 @@ def getPrediction(shipping,rating_point,rating_number,seller_point,price_class,r
 
     return prediction
 
-    #get the dataset from the website
+#get the dataset from the website
 def get_data(request):
     #price classes are : 0-49 TL  50-99 TL ..... 450-499 TL 
     price_class = 0
@@ -115,21 +115,14 @@ def getfile(request):
 
 
 from sklearn.preprocessing import LabelEncoder
-def ML_function(request):
+# Distribution plot on price
+import seaborn as sns
+from matplotlib import pyplot as plt
 
-    # data-science section   
-    """
-    my_dict = { 'product_name': productList, 'new_price':new_priceList, 'old_price':old_priceList, 
-            'discount_ratio':ratioList, 'shipping':shippingList,'rating_point':ratingList,
-            'rating_number': rating_textList, 'seller_name':seller_nameList, 
-            'seller_point':seller_pointList,"price_class":price_classList}
-   
-    df = pd.DataFrame.from_dict(my_dict, orient='index')
-    dt = df.transpose()    
-    dt.to_csv('price_dynamics.csv', index=True, header=True,  encoding='utf-8')  
-    """  
+
+def ML_function(request):
     # import the data saved as a csv
-    df = pd.read_csv("../price_dynamics.csv")
+    df = pd.read_csv("api\price_dynamics.csv")
     #D:\price_optimization\price_dynamics2.csv
     print("df.heads", df.head())
 
@@ -147,9 +140,7 @@ def ML_function(request):
     
     correlations=df.corr()
         
-    import seaborn as sns
-    from matplotlib import pyplot as plt
-    # Distribution plot on price
+
 
 
     point = []
@@ -157,11 +148,11 @@ def ML_function(request):
     discount_ratio = []
     seller_point = []
 
-
     print(df.head())
 
     # veri kümesi
-    #shipping,rating_point,rating_number,seller_point,price_class
+    # shipping,rating_point,rating_number,seller_point,price_class
+
     X = df.iloc[:, [4,5,6,8,9]].values
     y = df.iloc[:,1].values
 

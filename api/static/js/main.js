@@ -2,6 +2,7 @@ var buttonC = document.getElementById("btn_default");
 
 
 
+
 const n11_default_list = ["h3", "productName", "ins","newPrice", "del","oldPrice","span","ratio",
 "span","textImg freeShipping","ratingCont","div","span","ratingText","span","sallerName","span","point"];
 
@@ -32,5 +33,8 @@ function addObject(event) {
   document.getElementById("sellerPoint_class").value = "point";
  
 }
+
+
+
 
 

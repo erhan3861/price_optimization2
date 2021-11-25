@@ -31,8 +31,6 @@
 
     <h1 align = "center">Price Dataset</h1>
 
-  
-  
   </head>
   <body>
     <div>
@@ -140,7 +138,8 @@
     <br>
     <br>
     <a style = "margin : 400px;" href="{% url 'getfile' %}" >Download as csv</a>  
-    <input class="button"  onClick="location.href='http://127.0.0.1:8000/MLfunction'" value="Train"  style = "background-color: rgb(210, 30, 30);"  />
+    <button class="button" id="train_btn" value="Train"  style = "background-color: rgb(210, 30, 30);" onClick="location.href='https://ml-project-master.herokuapp.com/MLfunction'"> Train </button>
+   <! ---button class="button" id="train_btn" value="Train"  style = "background-color: rgb(210, 30, 30);" onClick="location.href='http://127.0.0.1:8000/MLfunction'" Train --->
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

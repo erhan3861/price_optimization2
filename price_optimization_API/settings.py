@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-!4wd2o)ys1^2xo$$2)60*sbt(et+u+6z-!uf@dfhr!)px*5tr+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["ml-project-master.herokuapp.com"]
+ALLOWED_HOSTS = ["ml-project-master.herokuapp.com", '127.0.0.1']
 
 
 # Application definition
@@ -50,7 +50,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = 'price_optimization_API.urls'
 
@@ -124,6 +127,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR,  'static')
+# Extra places for collectstatic to find static files.
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
