@@ -199,6 +199,6 @@ def save_to_csv():
 
 
 def get_dict(): 
-    print(len(data_dict))
+    print("len of the data_dict = ",len(data_dict))
     return data_dict
      

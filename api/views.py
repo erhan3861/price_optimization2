@@ -128,9 +128,9 @@ def ML_function(request):
     """  
     # import the data saved as a csv
 
-    df = pd.read_csv("D:\\price_optimization\\price_dynamics.csv")
+    df = pd.read_csv("../price_dynamics.csv")
     #D:\price_optimization\price_dynamics2.csv
-    print(df.head())
+    print("df.heads",df.head())
 
     from sklearn.preprocessing import LabelEncoder
 
