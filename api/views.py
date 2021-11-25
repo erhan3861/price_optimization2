@@ -38,7 +38,6 @@ def result(request):
     seller_point = int(request.GET['seller_point'])
 
     result = getPrediction(shipping, rating_point, rating_number, seller_point, price_class, request)
-    print("type= ",type(result))
 
     return render(request, 'result.html', {'result': result[0]})
 
@@ -175,8 +174,8 @@ def ML_function(request):
 
     # saving model as a pickle
     import pickle
-    pickle.dump(regressor, open("price_prediction_model.sav", "wb"))
-    pickle.dump(sc, open("scaler.sav", "wb"))
+    pickle.dump(regressor, open("./price_prediction_model.sav", "wb"))
+    pickle.dump(sc, open("./scaler.sav", "wb"))
 
     return render(request, 'index.html', {})
 
