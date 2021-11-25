@@ -38,8 +38,9 @@ def result(request):
     seller_point = int(request.GET['seller_point'])
 
     result = getPrediction(shipping, rating_point, rating_number, seller_point, price_class, request)
+    print("type= ",type(result))
 
-    return render(request, 'result.html', {'result': str(result[0])})
+    return render(request, 'result.html', {'result': result[0]})
 
 
 # custom method for generating predictions
