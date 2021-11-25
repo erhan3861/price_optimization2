@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+  
+
+<html lang="en" dir="ltr">
+  <head>
+   
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% load static %}
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css'%}">
+    
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+	             <li style = "background-color:darkorange " >{{ message }}</li>
+           {% endfor %}
+        </ul>
+    {% endif %}
+
+    <aside>
+      <h4>  Makine Öğrenmesi Projesi İçin Veri Seti Hazırlama Sitesi (E-ticaret Veriseti)</h4>
+    </aside>
+
+    <title>Home page</title>
+
+    <h1 align = "center">Price Dataset</h1>
+
+  
+  
+  </head>
+  <body>
+    <div>
+      <button class = "button" id="btn_default"  style = "margin-right: 30px; background-color: blueviolet;"> Default </button>
+      
+      <input class="button" type="submit" value='Custom' style = "margin-right: 30px; background-color: chocolate;">
+    </div>
+
+    <form action="{% url 'get_data' %}"  align="center">
+      {% csrf_token %}
+
+        <!-- deatils tag starts here -->
+      <details>
+        <summary style = "margin-left: 300px;" >Price Ranges</summary>   
+        <p style = "margin-left: 250px;">Determine a Price range. For example  <b>50</b>  for  0-49; 50-99; 100-149   </p>
+      </details>
+
+      <input style = "margin-left: 300px;"  type="text" name="price_ranges">
+      <br> 
+      <br> 
+      <details>
+        <summary style = "margin-left: 300px;" >Number of the classes</summary>
+        <p style = "margin-left: 20px;" >Determine a number for the classes. For example  <b>3</b>  for  0-49; 50-99; 100-149  </p>
+      </details>
+
+      <input   type="text" name="number_class">
+      <br> <br>
+      
+    <div id="grid">
+
+    <div>
+      <p> <b>  Product Name   </b></p>
+      <p>div      <input type="text" name="div_product_name" size="20"  id="name_div" > </p>
+      <p>class  <input type="text" name="class_product_name" size = "18" id="name_class"></p>
+    </div>
+
+    <div>
+      <p><b> New Price </b></p>
+      <p>div       <input type="text" name="div_new_price" size="20" id="new_price_div"> </p>
+      <p>class  <input type="text" name="class_new_price" size = "18" id="new_price_class"></p>
+    </div>
+
+    <div>
+    <p>Old Price</p>
+      <!--<input type="text" name="old_price"> -->
+      <p>div       <input type="text" name="div_old_price" size="20" id="old_price_div"> </p>
+      <p>class  <input type="text" name="class_old_price" size = "18" id="old_price_class"></p>
+    </div>
+
+    <div>
+       <!--<input type="text" name="discount_ratio">-->
+      <p>Discount Ratio</p> 
+      <p>div       <input type="text" name="div_ratio" size="20" id="discount_div"> </p>
+      <p>class  <input type="text" name="class_ratio" size = "18" id="discount_class"></p> 
+    </div>
+
+    <div>
+      <p>Shipping</p>
+      <!--<input type="text" name="shipping"> -->
+      <p>div       <input type="text" name="div_shipping" size="20" id="shipping_div"> </p>
+      <p>class  <input type="text" name="class_shipping" size = "18" id="shipping_class"></p> 
+    </div>
+
+    <div>
+      <p>Rating Point</p>
+      <!--<input type="text" name="rating_point">-->
+      <p>div       <input type="text" name="div_rating" size="20" id="ratingPoint_div"> </p>
+      <p>class  <input type="text" name="class_rating" size = "18" id="ratingPoint_class"></p>
+
+    </div>
+
+    <div>
+      <p>Rating Number</p>
+      <!--<input type="text" name="rating_number">-->
+      <p>div       <input type="text" name="div_rating_text" size="20" id="ratingNumber_div"> </p>
+      <p>class  <input type="text" name="class_rating_text" size = "18" id="ratingNumber_class"></p>
+    </div> 
+
+    <div>
+      <p>Seller Name</p>
+      <!--<input  type="text" name="seller_point"> -->
+      <p>div       <input type="text" name="div_seller_name" size="20" id="sellerName_div"> </p>
+      <p>class  <input type="text" name="class_seller_name" size = "18" id="sellerName_class"></p>
+    </div>
+
+    <div>
+      <p>Seller Point</p>
+      <!-- <input  type="text" name="seller_point"> -->
+      <p>div       <input type="text" name="div_seller_point" size="20" id="sellerPoint_div"> </p>
+      <p>class  <input type="text" name="class_seller_point" size = "18" id="sellerPoint_class"></p>
+    </div> 
+
+  </div>
+   
+    <div>
+      <br> <br> <br> <br> <br> <br>
+      <input class="button" type="submit" value='Get Values' onclick="control_blanks()" id="btn_getValues">
+      
+    </div>
+
+    
+   
+    </form>
+    <br>
+    <br>
+    <br>
+    <a style = "margin : 400px;" href="{% url 'getfile' %}" >Download as csv</a>  
+    <input class="button"  onClick="location.href='http://127.0.0.1:8000/MLfunction'" value="Train"  style = "background-color: rgb(210, 30, 30);"  />
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script  type="text/javascript" src="{% static '/js/main.js' %}" ></script>  
+
+  </body>
+</html>
