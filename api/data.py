@@ -190,7 +190,7 @@ def save_to_csv():
         'seller_point':seller_pointList,"price_class":price_classList}
 
     
-    print(len(data_dict))
+    print("len of the data_dict after saving to csv",len(data_dict))
 
     with open('price_dynamics.csv', 'w',encoding='utf-8-sig', newline='') as csvfile:
         writer = csv.writer(csvfile)
@@ -199,6 +199,6 @@ def save_to_csv():
 
 
 def get_dict(): 
-    print("len of the data_dict = ",len(data_dict))
+    print("len of the data_dict returned= ",len(data_dict))
     return data_dict
      
