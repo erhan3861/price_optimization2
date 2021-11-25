@@ -33,6 +33,15 @@ data_dict = {}
 
 def reset_all_the_list():
     productList.clear()
+    new_priceList.clear()
+    old_priceList.clear()
+    ratioList.clear()
+    shippingList.clear()
+    ratingList.clear()
+    rating_textList.clear()
+    seller_nameList.clear()
+    seller_pointList.clear()
+    price_classList.clear()
 
 
 def getPriceFeatures(request, url, price_class):
