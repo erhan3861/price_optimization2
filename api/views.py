@@ -45,8 +45,8 @@ def result(request):
 # custom method for generating predictions
 def getPrediction(shipping, rating_point, rating_number, seller_point, price_class, request):
     import pickle
-    model = pickle.load(open("price_prediction_model.sav", "rb"))
-    scaled = pickle.load(open("scaler.sav", "rb"))
+    model = pickle.load(open("./price_prediction_model.sav", "rb"))
+    scaled = pickle.load(open("./scaler.sav", "rb"))
     global sc
     try:
         prediction = model.predict(sc.transform([[shipping, rating_point, rating_number, seller_point, price_class]]))
@@ -174,8 +174,8 @@ def ML_function(request):
 
     # saving model as a pickle
     import pickle
-    pickle.dump(regressor, open("./price_prediction_model.sav", "wb"))
-    pickle.dump(sc, open("./scaler.sav", "wb"))
+    pickle.dump(regressor, open("price_prediction_model.sav", "wb"))
+    pickle.dump(sc, open("scaler.sav", "wb"))
 
     return render(request, 'index.html', {})
 
