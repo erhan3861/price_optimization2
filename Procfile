@@ -1,1 +1,1 @@
-web: gunicorn --workers 5 -thread 2 price_optimization_API.wsgi --timeout 10 --keep-alive 5 --log-level debug
+web: gunicorn price_optimization_API.wsgi --log-file - --workers 1 --threads 4
