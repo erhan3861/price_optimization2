@@ -122,7 +122,7 @@ from matplotlib import pyplot as plt
 
 def ML_function(request):
     # import the data saved as a csv
-    df = pd.read_csv("/api/price_dynamics.csv")
+    df = pd.read_csv("/app/price_dynamics.csv")
     #D:\price_optimization\price_dynamics2.csv
     print("df.heads", df.head())
 
