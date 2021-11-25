@@ -39,7 +39,7 @@ def result(request):
 
     result = getPrediction(shipping, rating_point, rating_number, seller_point, price_class, request)
 
-    return render(request, 'result.html', {'result': result[0].encode('utf-8')})
+    return render(request, 'result.html', {'result': result[0]})
 
 
 # custom method for generating predictions
