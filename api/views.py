@@ -113,8 +113,10 @@ def getfile(request):
         data_dict['seller_name'][i],data_dict['seller_point'][i],data_dict['price_class'][i]])  
     return response  
 
+
+from sklearn.preprocessing import LabelEncoder
 def ML_function(request):
-    import pandas as pd
+
     # data-science section   
     """
     my_dict = { 'product_name': productList, 'new_price':new_priceList, 'old_price':old_priceList, 
@@ -127,12 +129,11 @@ def ML_function(request):
     dt.to_csv('price_dynamics.csv', index=True, header=True,  encoding='utf-8')  
     """  
     # import the data saved as a csv
-
     df = pd.read_csv("../price_dynamics.csv")
     #D:\price_optimization\price_dynamics2.csv
-    print("df.heads",df.head())
+    print("df.heads", df.head())
 
-    from sklearn.preprocessing import LabelEncoder
+
 
     le = LabelEncoder()
     le_shipping = le.fit_transform(df['shipping'])

@@ -194,11 +194,11 @@ def save_to_csv():
 
     with open('price_dynamics.csv', 'w',encoding='utf-8-sig', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['product_name', 'new_price','old_price', 'discount_ratio', 'shipping','rating_point', 'rating_number', 'seller_name','seller_point','price_class'])
+        writer.writerow(['product_name', 'new_price', 'old_price', 'discount_ratio', 'shipping', 'rating_point', 'rating_number', 'seller_name', 'seller_point', 'price_class'])
         writer.writerows(zip(*data_dict.values()))
 
 
 def get_dict(): 
-    print("len of the data_dict returned= ",len(data_dict))
+    print("len of the data_dict returned= ", len(data_dict))
     return data_dict
      
