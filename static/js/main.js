@@ -1,5 +1,4 @@
 var buttonC = document.getElementById("btn_default");
-var btnPredict = document.getElementById("btn_train");
 
 
 
@@ -8,8 +7,6 @@ const n11_default_list = ["h3", "productName", "ins","newPrice", "del","oldPrice
 
 // Second, assign click event
 buttonC.addEventListener("click", addObject, true);
-btnPredict.addEventListener("click", trainModel, true);
-
 
 // Then add event listener
 function addObject(event) {
@@ -33,9 +30,4 @@ function addObject(event) {
   document.getElementById("sellerPoint_div").value = "span";
   document.getElementById("sellerPoint_class").value = "point";
  
-}
-
-
-function trainModel(event) {
-  window.location.href= "https://www.google.com.tr"; 
 }

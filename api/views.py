@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+
+import price_optimization_API
 from .apps import ApiConfig
 from .data import getPriceFeatures, save_to_csv, reset_all_the_list
 from rest_framework.views import APIView
@@ -17,6 +19,10 @@ from wsgiref.util import FileWrapper
 from sklearn.preprocessing import StandardScaler
 
 sc = StandardScaler()
+
+#global vars
+price_ranges = "50"
+num_class = "10"
 
 
 # our home page view
@@ -66,9 +72,14 @@ def get_data(request):
     price_class = 0
     #clear all the lists for getting new csv file
     reset_all_the_list()
-
+    
+    global num_class,price_ranges
     num_class = request.GET['number_class']
     price_ranges = request.GET['price_ranges']
+
+    print("num_class=",num_class)
+    print("price_ranges=",price_ranges)
+
 
     if num_class == '':
         message_type = "warning"
@@ -129,7 +140,21 @@ from matplotlib import pyplot as plt
 
 def ML_function(request):
     # import the data saved as a csv
-    df = pd.read_csv("./api/price_dynamics.csv")
+    print("here...",request.POST)
+    global price_ranges
+    if request.POST['valid_price_class'] is not '':
+        price_ranges = request.POST['valid_price_class']
+
+    print("type0=",type(price_ranges),"   price_ranges = ",price_ranges)
+
+    
+    if str(price_ranges) == '25':
+        df = pd.read_csv("./api/price_dynamics_25.csv")
+    elif str(price_ranges) == '50':
+        df = pd.read_csv("./api/price_dynamics_50.csv")
+    else:
+        df = pd.read_csv("./api/price_dynamics.csv")
+    
     # D:\price_optimization\price_dynamics2.csv
     print("df.heads", df.head())
 
