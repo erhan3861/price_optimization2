@@ -45,7 +45,7 @@
             <div class="col mt-2">
             <center> <h2>Price Features</h2>
             <form action="{% url 'result' %}" method="post"> 
-              {% csrf_token %}
+            {% csrf_token %}
               
               <p class="mt-1">Price Class:</p>
               <input type="text" name="price_class">
