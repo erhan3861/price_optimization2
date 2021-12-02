@@ -233,7 +233,7 @@ def find_words():
     #print(productListClear)
 
     import nltk 
-    nltk.download()
+    #nltk.download()
     from TurkishStemmer import TurkishStemmer
     
     stemmer = TurkishStemmer()
