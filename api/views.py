@@ -15,6 +15,7 @@ import django.template.loader as loader
 # for download csv
 import csv
 from wsgiref.util import FileWrapper
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 
 from sklearn.preprocessing import StandardScaler
 
@@ -38,13 +39,15 @@ def predict(request):
 
 
 # our result page view
+
 def result(request):
     # ML_function()
-    price_class = int(request.GET['price_class'])
-    shipping = int(request.GET['shipping'])
-    rating_point = int(request.GET['rating_point'])
-    rating_number = int(request.GET['rating_number'])
-    seller_point = int(request.GET['seller_point'])
+    
+    price_class = int(request.POST.get('is_private', "10"))
+    shipping = int(request.POST.get('shipping',"0"))
+    rating_point = int(request.POST.get('rating_point',"50"))
+    rating_number = int(request.POST.get('rating_number',"10"))
+    seller_point = int(request.POST.get('seller_point',"50"))
 
     result = getPrediction(shipping, rating_point, rating_number, seller_point, price_class, request)
     

@@ -37,14 +37,14 @@
     <div class="container">
        <div class="row">
 
-            <div class="col mt-1">
+            <div class="col mt-1" >
                <!-- <img src="../help_1.png" class="rounded float-left" alt="..."> -->
               {% load static %} <img  class="mb-5 border"src="{% static 'images/actual_fitted.png' %}" alt="Hi!" />
             </div>
 
             <div class="col mt-2">
             <center> <h2>Price Features</h2>
-            <form action="{% url 'result' %}"> 
+            <form action="{% url 'result' %}" method="post"> 
               {% csrf_token %}
               
               <p class="mt-1">Price Class:</p>
@@ -67,6 +67,7 @@
               <input type="text" name="seller_point">
                <br>
               <input type="submit" class="btn btn-success btn-md mt-3" value='Get Predictions'>
+
             </form></center>
           </div>
       </div>        
