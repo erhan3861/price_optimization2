@@ -298,16 +298,41 @@ def find_words():
     table_dict_1 = {}
     table_dict_2 = {}
     counter = 0
+    man_woman_dict = {}
+    brand_dict = {}
+    sport_dict = {}
+    color_dict = {}
+
     for item in  df_most_targetwords["data"]:     
+        print(item)
         if counter<100:       
             table_dict_1[item[0]] = item[1]
         else:
             table_dict_2[item[0]] = item[1]
+
+        if item[0] == "erkek" or item[0] == "bayan" or item[0] == "çocuk" or item[0] == "kız":
+             man_woman_dict[item[0]] = item[1]
+        elif item[0] == "adidas" or item[0] == "nik" or item[0] == "pum" or item[0] == "nik" or  item[0] == "jump" or item[0] == "kinetix" or item[0] == "lumberjack" or item[0] == "slazenger":
+             brand_dict[item[0]] = item[1]
+        #brands continue
+        elif "das" in item[0] or "net" in item[0]  or item[0] == "lescon" or item[0] == "lotto" or item[0] == "polo" or item[0] == "reebok" or item[0] == "hummel" or item[0] == "hammer"  or item[0] == "runfalcon":
+             brand_dict[item[0]] = item[1]
+        
+        if item[0] == "futbol" or item[0] == "basketbol" or item[0] == "voleybol" or item[0] == "tenis" or item[0] == "koş" or item[0] == "yürüyüş"or item[0] == "futsal":
+            sport_dict[item[0]] = item[1]
+        
+        if item[0] == "siyah" or item[0] == "beyaz" or item[0] == "gri" or item[0] == "lacivert" or item[0] == "haki" or item[0] == "mavi" or item[0] == "turunç" or item[0] == "yeşil":
+            color_dict[item[0]] = item[1]           
+
+
         counter += 1
 
-    #print(table_dict)
+    print(man_woman_dict)
+    print(brand_dict)
+    print(sport_dict)
+    print(color_dict)
 
 
-    return table_dict_1, table_dict_2
+    return table_dict_1, table_dict_2, man_woman_dict, brand_dict, sport_dict, color_dict
 
 

@@ -37,11 +37,13 @@
 
     <p class="container mt-5"><font face="tahoma" size="7">  {{ result }}  </font> </p> <center>
     <div>
+
         <!-- start of the tables -->
         <div class="container">
             <div class="row">
 
-                <div class="col">
+                <div class="col w-50">
+                <div class="table-responsive">
                   <table class="table table-dark">
                     <thead class="bg-danger">
                       <tr>
@@ -58,7 +60,9 @@
                     </tbody>
                   </table>
                 </div>
-                <div class="col">
+              <!-- </div> -->
+
+                <!-- <div class="col table-responsive"> -->
                   <table class="table table-dark">
                     <thead  class="bg-danger">
                       <tr>
@@ -76,9 +80,79 @@
                     </tbody>
                   </table>
                 </div>
+                <div class="col ml-5">
+                  <table class="table">
+                    <thead class="bg-primary">
+                      <tr>
+                        <th scope="col">User Types</th>
+                        <th scope="col">Count</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for key,value in man_woman_dict.items %}
+                
+                      <tr><td>{{key}}</td><td>{{ value}}</td></tr>
+                
+                       {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- brand table start-->
+                  <table class="table">
+                    <thead class="bg-secondary">
+                      <tr>
+                        <th scope="col">Brand Types</th>
+                        <th scope="col">Count</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for key,value in brand_dict.items %}
+                
+                      <tr><td>{{key}}</td><td>{{ value}}</td></tr>
+                
+                       {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- brand table end-->
+                  <!-- sport table start-->
+                  <table class="table">
+                    <thead class="bg-success">
+                      <tr>
+                        <th scope="col">Sport Types</th>
+                        <th scope="col">Count</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for key,value in sport_dict.items %}
+                
+                      <tr><td>{{key}}</td><td>{{ value}}</td></tr>
+                
+                       {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- sport table end-->
+                  <!-- color table start-->
+                  <table class="table">
+                    <thead class="bg-warning">
+                      <tr>
+                        <th scope="col">Color Types</th>
+                        <th scope="col">Count</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for key,value in color_dict.items %}
+                
+                      <tr><td>{{key}}</td><td>{{ value}}</td></tr>
+                
+                       {% endfor %}
+                    </tbody>
+                  </table>
+                  <!-- color table end-->
+
+                </div>
             </div>
         </div>
        <!-- end of the tables -->
+
 
         </div>
 

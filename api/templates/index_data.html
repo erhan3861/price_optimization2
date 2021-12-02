@@ -49,9 +49,9 @@
   </head>
   <body>
 
-    <div class="container bg-dark"  style="height: 100px;"  >
+    <div class="container bg-dark " >
       <div class="row">
-        <div class="col-4"  style="height: 80px;" >
+        <div class="col-4"  >
             <p class="text-white"> Default Price Ranges (25, 50, 75, 100)</p>
             <!-- <button class="btn btn-md mx-auto" id="btn_default"  style = "background-color: blueviolet;"> Default </button>  -->     
             <!-- Buttons with dropdowns -->
@@ -101,7 +101,7 @@
         </div>
         <!-- end of the custom button column -->
 
-        <!-- start of the TRAIN button column -->
+     <!-- start of the TRAIN button column -->
         <div class="col-4">
         <form action="{% url 'MLfunction' %}" method="post">
           {% csrf_token %}
@@ -126,7 +126,7 @@
       <!-- row1 starts here -->
       <div class="container ">
 
-      <div class="row bg-danger " style="height: 60px; ">
+      <div class="row bg-danger align-items-center mt-1">
            <div class="col-md-3 align-self-center h-100  mx-auto" >
             
             <!-- <input type="text" name="price_ranges"> -->
@@ -136,7 +136,7 @@
               <p class="text-light bg-dark z-index-2"> >>><b>50</b> for 0-49; 50-99; 100-149   </p>
               </details></div>
 
-              <div class="col-md-3 my-2 ">
+              <div class="col-md-3 my-2">
                 <input class="form-control"  name="price_ranges" list="datalistOptions" id="exampleDataList" placeholder="Type the price range">
                         <datalist id="datalistOptions" name="test">
                           <option value="25">

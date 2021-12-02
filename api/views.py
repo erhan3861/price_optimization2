@@ -51,8 +51,19 @@ def result(request):
 
     result = getPrediction(shipping, rating_point, rating_number, seller_point, price_class, request)
     
-    most_words_1, most_words_2 = find_words()
-    return render(request, 'result.html', {'result': result[0],'most_words_1':most_words_1, 'most_words_2':most_words_2})
+    most_words_1, most_words_2, man_woman_dict, brand_dict, sport_dict, color_dict = find_words()
+
+    context = {
+        'result': result[0],
+        'most_words_1':most_words_1, 
+        'most_words_2':most_words_2,
+        'man_woman_dict' : man_woman_dict, 
+        'brand_dict': brand_dict, 
+        'sport_dict' : sport_dict, 
+        'color_dict' : color_dict,
+    }
+    return render(request, 'result.html', context)
+    # return render(request, 'result.html', {'result': result[0],'most_words_1':most_words_1, 'most_words_2':most_words_2})
 
 
 # custom method for generating predictions
