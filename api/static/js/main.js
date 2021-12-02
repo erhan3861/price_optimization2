@@ -1,5 +1,7 @@
-var buttonC = document.getElementById("btn_default");
-var buton_custom = document.getElementById("buton_custom");
+var buttonC = document.getElementById('buton_custom');
+// var buton_custom = document.getElementById("buton_custom");
+var button_select = document.getElementById('inputGroupSelect01');
+
 
 
 const n11_default_list = ["h3", "productName", "ins","newPrice", "del","oldPrice","span","ratio",
@@ -7,8 +9,7 @@ const n11_default_list = ["h3", "productName", "ins","newPrice", "del","oldPrice
 
 // Second, assign click event
 buttonC.addEventListener("click", addObject, true);
-button_custom.addEventListener("click", addObject2, true);
-
+button_select.addEventListener("click", makePasive, true);
 
 // Then add event listener
 function addObject(event) {
@@ -31,5 +32,31 @@ function addObject(event) {
   document.getElementById("sellerName_class").value = "sallerName";
   document.getElementById("sellerPoint_div").value = "span";
   document.getElementById("sellerPoint_class").value = "point";
-  document.getElementById("btn_getValues").disabled = true; 
+  document.getElementById("btn_getValues").disabled = false; 
 }
+
+
+function makePasive(event) {
+
+  document.getElementById("btn_getValues").disabled = true; 
+
+  var link = document.getElementById("csv_btn");
+  link.setAttribute('href', "#");
+
+
+}
+
+
+// function changeLink() {
+//   var link = document.getElementById("mylink");
+
+//   window.open(
+//     link.href,
+//     '_blank'
+//   );
+
+//   link.innerHTML = "facebook";
+//   link.setAttribute('href', "http://facebook.com");
+
+//   return false;
+// }

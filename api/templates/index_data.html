@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css'%}">
-
   
 <nav class="navbar navbar-expand-md  bg-dark navbar-dark mx-auto">
   <form class="form-inline" action="/action_page.php">
@@ -28,7 +27,7 @@
         <a class="nav-link" href="#">Link</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link disabled" href="#">Disabled</a>
+        <a class="nav-link" href="help">Help</a>
       </li>
     </ul>
     <input class="form-control" style="margin-left:700px;"   type="text" placeholder="Search">
@@ -56,7 +55,7 @@
             <p class="text-white"> Default Price Ranges (25, 50, 75, 100)</p>
             <!-- <button class="btn btn-md mx-auto" id="btn_default"  style = "background-color: blueviolet;"> Default </button>  -->     
             <!-- Buttons with dropdowns -->
-                <div class="input-group mb-3 w-75" id="btn_default" >
+                <div class="input-group mb-3 w-75" >
                   <div class="input-group-prepend">
                     <label class="input-group-text" for="inputGroupSelect01">Options</label>
                   </div>
@@ -88,13 +87,17 @@
         <div class="col-4">
           <p class="text-white">Custom values of the price ranges</p>
           <button class="btn btn-md mx-auto" id="buton_custom" type="button" style = "background-color: chocolate;"> Custom </button>
-          
+
+                 <!--           
                   <script>
                     var btn_custom=document.getElementById("buton_custom");
                         btn_custom.onclick=function(){
                           document.getElementById("btn_getValues").disabled = false;   
+                          document.getElementById("name_div").value= 'h3';
                       }
-                  </script>  
+
+
+                  </script>  -->
         </div>
         <!-- end of the custom button column -->
 
@@ -234,9 +237,13 @@
    </div>
    <!-- bottom buttons row-->
    <div class="row mt-3 " style="height:3rem">
-        <a class="col btn  border border-info  btn btn-outline-primary text-black text-center" value="Download as csv" href="{% url 'getfile' %}">Download as csv</a>
-        <input class="col btn-outline-success ml-5 btn btn-outline-success" type="submit" value='Get Values' onclick="control_blanks()" id="btn_getValues">
+
+      <a class="col btn  border border-info  btn btn-outline-primary text-black text-center" value="Download as csv" id="csv_btn" href="{% url 'getfile' %}">Download as csv</a>
+      <input class="col btn-outline-success ml-5 btn btn-outline-success" type="submit" value='Get Values' onclick="control_blanks()" id="btn_getValues">
         
+
+
+
         <!-- jquery codes of the custom button-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script>   
@@ -272,8 +279,10 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script  type="text/javascript" src="{% static '/js/main.js' %}" ></script>  
+    <script  type="text/javascript" src="{% static 'js/main.js' %}" ></script>  
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   
+    <!-- <script src="{% static '/js/custom.js' %}"></script>  -->
     
     
   </body>

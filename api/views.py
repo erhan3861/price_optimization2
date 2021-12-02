@@ -3,7 +3,7 @@ import pandas as pd
 
 import price_optimization_API
 from .apps import ApiConfig
-from .data import getPriceFeatures, save_to_csv, reset_all_the_list
+from .data import find_words, getPriceFeatures, save_to_csv, reset_all_the_list, get_product_list,find_words
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import render, HttpResponse
@@ -19,6 +19,9 @@ from wsgiref.util import FileWrapper
 from sklearn.preprocessing import StandardScaler
 
 sc = StandardScaler()
+
+#for nltk issues
+
 
 #global vars
 price_ranges = "50"
@@ -44,15 +47,16 @@ def result(request):
     seller_point = int(request.GET['seller_point'])
 
     result = getPrediction(shipping, rating_point, rating_number, seller_point, price_class, request)
-
-    return render(request, 'result.html', {'result': result[0]})
+    
+    most_words_1, most_words_2 = find_words()
+    return render(request, 'result.html', {'result': result[0],'most_words_1':most_words_1, 'most_words_2':most_words_2})
 
 
 # custom method for generating predictions
 def getPrediction(shipping, rating_point, rating_number, seller_point, price_class, request):
     import pickle
     model = pickle.load(open("./price_prediction_model.sav", "rb"))
-    scaled = pickle.load(open("./scaler.sav", "rb"))
+    #scaled = pickle.load(open("./scaler.sav", "rb"))
     global sc
     try:
         prediction = model.predict(sc.transform([[shipping, rating_point, rating_number, seller_point, price_class]]))
@@ -87,7 +91,7 @@ def get_data(request):
         return render(request, 'index_data.html', {})
     elif price_ranges == '':
         message_type = "warning"
-        messages.warning(request, "Your pirce range  is blank")
+        messages.warning(request, "Your price range  is blank")
         return render(request, 'index_data.html', {})
     else:
         message_type = "success"
@@ -141,6 +145,7 @@ from matplotlib import pyplot as plt
 def ML_function(request):
     # import the data saved as a csv
     print("here...",request.POST)
+
     global price_ranges
     if request.POST['valid_price_class'] is not '':
         price_ranges = request.POST['valid_price_class']
@@ -152,6 +157,10 @@ def ML_function(request):
         df = pd.read_csv("./api/price_dynamics_25.csv")
     elif str(price_ranges) == '50':
         df = pd.read_csv("./api/price_dynamics_50.csv")
+    elif str(price_ranges) == '75':
+        df = pd.read_csv("./api/price_dynamics_75.csv")
+    elif str(price_ranges) == '100':
+        df = pd.read_csv("./api/price_dynamics_100.csv")
     else:
         df = pd.read_csv("./api/price_dynamics.csv")
     
@@ -187,24 +196,54 @@ def ML_function(request):
     from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-    # Ölçekleme
-    from sklearn.preprocessing import StandardScaler
-    global sc
-    sc = StandardScaler()
-    X_train = sc.fit_transform(X_train)
+    
 
     import numpy as np
     from sklearn.ensemble import RandomForestRegressor
 
     regressor = RandomForestRegressor(n_estimators=1000, random_state=42)
     regressor.fit(X_train, y_train)
+    
+    #actual and prediction visualition
+    import seaborn as sns
+    plt.figure(figsize=(6, 6))
+
+    y_pred = regressor.predict(X_test)
+    #for comparison actual and predicted values
+    df_actual_predicted = pd.DataFrame({'Actual':y_test,'Predicted':y_pred})
+    print(df_actual_predicted )
+    
+    ax = sns.distplot(y, hist=False, color="r", label="Actual Value")
+    sns.distplot(y_pred, hist=False, color="b", label="Fitted Values" , ax=ax)
+
+
+    plt.title('Actual vs Fitted Values for Price')
+    plt.xlabel('price_range')
+    plt.ylabel('density')
+    plt.legend(loc='upper right',bbox_to_anchor=(1,0.95))
+    plt.savefig("./api/static/images/actual_fitted.png")
+    #plt.show()
+    #plt.close()
+
+    # Ölçekleme
+    from sklearn.preprocessing import StandardScaler
+    global sc
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
 
     # saving model as a pickle
     import pickle
     pickle.dump(regressor, open("price_prediction_model.sav", "wb"))
     pickle.dump(sc, open("scaler.sav", "wb"))
+    
+    get_product_list(df.iloc[:, 0].values)
+    
 
     return render(request, 'index.html', {})
+
+
+
+
 
 
 """

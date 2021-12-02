@@ -36,6 +36,51 @@
     <center><h1 class="container mt-5" style="color: crimson;"  size="12">Prediction</h1>
 
     <p class="container mt-5"><font face="tahoma" size="7">  {{ result }}  </font> </p> <center>
+    <div>
+        <!-- start of the tables -->
+        <div class="container">
+            <div class="row">
+
+                <div class="col">
+                  <table class="table table-dark">
+                    <thead class="bg-danger">
+                      <tr>
+                        <th scope="col">Word</th>
+                        <th scope="col">Count</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for key,value in most_words_1.items %}
+                
+                      <tr><td>{{ key}}</td><td>{{ value}}</td></tr>
+                
+                       {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col">
+                  <table class="table table-dark">
+                    <thead  class="bg-danger">
+                      <tr>
+                        <th scope="col">Word</th>
+                        <th scope="col">Count</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for key,value in most_words_2.items %}
+                
+                      <tr><td>{{ key}}</td><td>{{ value}}</td></tr>
+                
+                       {% endfor %}
+                      
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+        </div>
+       <!-- end of the tables -->
+
+        </div>
 
       <!-- jQuery first, then Popper.js, then Bootstrap JS -->
      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

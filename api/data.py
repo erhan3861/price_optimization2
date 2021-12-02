@@ -5,6 +5,9 @@ import re
 import math
 import csv
 
+import numpy as np
+import pandas as pd
+
 # this code blocks prevent our code from connection error to the website
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
@@ -199,3 +202,111 @@ def save_to_csv():
 def get_dict():
     print("len of the data_dict returned= ", len(data_dict))
     return data_dict
+
+
+def get_product_list(list):
+    global productList
+    productList = list
+    return productList
+
+
+
+def find_words():
+    global productList
+    lower_product_list = productList
+    others_list = []
+    productListClear = []
+
+    for i in range(len(lower_product_list)):
+        lower_product_list [i] = lower_product_list[i].lower()
+        
+    for product in lower_product_list:
+        if ("terli" in product) or ("terlik" in product) or ("boya" in product) or ("ipli" in product):
+            others_list.append(product)
+        else:
+            productListClear.append(product)
+    
+    #print("others = ",len(others_list))
+    #print(others_list)
+    #print("---------------------------------------------------------------")
+    #print("White list of the product = ",len(productListClear))
+    #print(productListClear)
+
+    import nltk 
+    from TurkishStemmer import TurkishStemmer
+    
+    stemmer = TurkishStemmer()
+    wordfreq = {}
+
+    for sentence in others_list:
+        tokens = nltk.word_tokenize(sentence)
+        for token in tokens:
+            token = stemmer.stem(token)
+            if token not in wordfreq.keys():
+                wordfreq[token] = 1
+            else:
+                wordfreq[token] += 1
+
+    #print(wordfreq)
+
+    wordfreqTargetProduct = {}
+    for sentence in productListClear:
+        tokens = nltk.word_tokenize(sentence)
+        for token in tokens:
+            token = stemmer.stem(token)
+            if token not in wordfreqTargetProduct.keys():
+                wordfreqTargetProduct[token] = 1
+            else:
+                wordfreqTargetProduct[token] += 1
+
+    #print(wordfreqTargetProduct)
+
+    import heapq
+    most_freq = heapq.nlargest(200, wordfreq, key=wordfreq.get)
+    most_freq_target = heapq.nlargest(200, wordfreqTargetProduct, key=wordfreqTargetProduct.get)
+
+
+    most_freq_target_counts = []
+    for item in most_freq_target:
+        most_freq_target_counts.append(wordfreqTargetProduct[item])
+
+    sentence_vectors = []
+    for sentence in productListClear:
+        sentence_tokens = nltk.word_tokenize(sentence)
+        sent_vec = []
+        for token in most_freq_target:
+            if token in sentence_tokens:
+                sent_vec.append(1)
+            else:
+                sent_vec.append(0)
+        sentence_vectors.append(sent_vec)
+
+    sentence_vectors = np.asarray(sentence_vectors)
+    type(sentence_vectors)
+    #print()
+
+    df_most_targetwords = pd.DataFrame(most_freq_target,columns=["words"])
+    df_most_targetwords["counts"] = most_freq_target_counts
+    #print("most used words are:")
+    #print(df_most_targetwords)
+
+    df_most_targetwords = df_most_targetwords.to_dict('split')
+    #print(df_most_targetwords)
+
+
+    table_dict_1 = {}
+    table_dict_2 = {}
+    counter = 0
+    for item in  df_most_targetwords["data"]:     
+        if counter<100:       
+            table_dict_1[item[0]] = item[1]
+        else:
+            table_dict_2[item[0]] = item[1]
+        counter += 1
+
+    #print(table_dict)
+
+
+    return table_dict_1, table_dict_2
+
+

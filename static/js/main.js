@@ -1,12 +1,11 @@
-var buttonC = document.getElementById("btn_default");
-
-
+var buttonC = document.getElementById("buton_custom");
 
 const n11_default_list = ["h3", "productName", "ins","newPrice", "del","oldPrice","span","ratio",
 "span","textImg freeShipping","ratingCont","div","span","ratingText","span","sallerName","span","point"];
 
 // Second, assign click event
 buttonC.addEventListener("click", addObject, true);
+
 
 // Then add event listener
 function addObject(event) {
@@ -29,5 +28,15 @@ function addObject(event) {
   document.getElementById("sellerName_class").value = "sallerName";
   document.getElementById("sellerPoint_div").value = "span";
   document.getElementById("sellerPoint_class").value = "point";
- 
+  document.getElementById("btn_getValues").disabled = false;
 }
+
+
+
+
+// $(document).ready(function(){
+//   $("#btn_getValues").click(function(){
+//     $("spinner").fadeToggle(3000);
+//     $("#spinner-text").fadeToggle(3000);
+//   });
+// });
