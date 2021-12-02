@@ -196,14 +196,19 @@ def ML_function(request):
     from sklearn.model_selection import train_test_split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
-    
+    # Ölçekleme
+    from sklearn.preprocessing import StandardScaler
+    global sc
+    sc = StandardScaler()
+    X_train = sc.fit_transform(X_train)
+    X_test = sc.fit_transform(X_test)
 
     import numpy as np
     from sklearn.ensemble import RandomForestRegressor
 
     regressor = RandomForestRegressor(n_estimators=1000, random_state=42)
     regressor.fit(X_train, y_train)
-    
+
     #actual and prediction visualition
     import seaborn as sns
     plt.figure(figsize=(6, 6))
@@ -224,12 +229,6 @@ def ML_function(request):
     plt.savefig("./api/static/images/actual_fitted.png")
     #plt.show()
     #plt.close()
-
-    # Ölçekleme
-    from sklearn.preprocessing import StandardScaler
-    global sc
-    sc = StandardScaler()
-    X_train = sc.fit_transform(X_train)
 
     # saving model as a pickle
     import pickle
