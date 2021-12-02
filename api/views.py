@@ -235,7 +235,9 @@ def ML_function(request):
     pickle.dump(regressor, open("price_prediction_model.sav", "wb"))
     pickle.dump(sc, open("scaler.sav", "wb"))
     
-    get_product_list(df.iloc[:, 0].values)
+    product_name_list = df.iloc[:, 0].values.tolist()
+    print(type(product_name_list))
+    get_product_list(product_name_list)
     
 
     return render(request, 'index.html', {})
