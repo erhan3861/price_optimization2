@@ -1,4 +1,4 @@
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, dammit
 import requests
 import time
 import re
@@ -15,6 +15,11 @@ from requests.packages.urllib3.util.retry import Retry
 from django.shortcuts import render, HttpResponse
 
 url = "https://www.n11.com/spor-giyim-ve-ayakkabi/spor-ayakkabi?q=spor+ayakkab%C4%B1&srt=SALES_VOLUME&minp=1&maxp=50&ref=auto"
+url_g = "https://www.gittigidiyor.com/ayakkabi/spor-ayakkabi?k=spor+ayakkab%C4%B1&qm=1&fmax=50&sf=2"
+#https://www.gittigidiyor.com/ayakkabi/spor-ayakkabi?k=spor%20ayakkab%C4%B1&qm=1
+# terlik -> https://www.gittigidiyor.com/ayakkabi/terlik?k=terlik&qm=1
+# addition = &fmax=100&fmin=50&sf=2
+
 
 # main section
 productList = []
@@ -28,13 +33,23 @@ seller_nameList = []
 seller_pointList = []
 price_classList = []
 
-data_dict = {}
+tag_list = []
 
+class_product_name,div_product_name,class_old_price,div_old_price, div_new_price,class_new_price = "","","","","",""
+div_ratio, class_ratio, div_shipping, class_shipping, div_rating, class_rating = "","","","","",""
+div_rating_text, class_rating_text, div_seller_name, class_seller_name, div_seller_point, class_seller_point = "","","","","",""
+
+data_dict = {}
+longer_tags = "0"
+#get the right url
+def get_store_url(url):
+    url = url
+    print(url)
 
 # base function, we are getting features of the price classes
 # this section is data-mining section
 
-def reset_all_the_list():
+def reset_all_the_list(store_list):
     productList.clear()
     new_priceList.clear()
     old_priceList.clear()
@@ -45,13 +60,18 @@ def reset_all_the_list():
     seller_nameList.clear()
     seller_pointList.clear()
     price_classList.clear()
+    tag_list.clear()
+    store_list.clear()
+    print("reset_all_the_list store_list=",store_list)
 
-
-def getPriceFeatures(request, url, price_class):
+def getPriceFeatures(request, store_name, url, price_class):
     # for security prevent codes from the bots
+    #return
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.67 Safari/537.36 Edg/87.0.664.55"
     }
+
+    print(store_name, url, "class = ",price_class)
 
     session = requests.Session()
     retry = Retry(connect=3, backoff_factor=0.5)
@@ -60,125 +80,361 @@ def getPriceFeatures(request, url, price_class):
     session.mount('https://', adapter)
 
     page = session.get(url, headers=headers)
-    # print(page)
+    #print(store_name)
     htmlPage = BeautifulSoup(page.content, 'html.parser')
-    data_all_color = htmlPage.find_all("li", attrs={"class": "column"})
-    # print(data_all_color)
 
+    if store_name == "N11":
+        data_all_color = htmlPage.find_all("li", attrs={"class": "column"})
+        longer_tags = "0"
+        #print(data_all_color,"data_all_color1")
+        if data_all_color == []:
+            data_all_color = htmlPage.find_all("li", attrs={"class": "itemize-piece"})
+            longer_tags = "1"
+            #print(data_all_color,"data_all_color")
+
+    elif store_name == "Gittigidiyor":
+        data_all_color = htmlPage.find_all("div", attrs={"class": "pmyvb0-0 jCCkZh"})
+    elif store_name == "Trendyol":
+        longer_tags = "99"
+        data_all_color = htmlPage.find_all("div", attrs={"class": "p-card-wrppr"})
+
+    #print(data_all_color)
+    global class_product_name,div_product_name,class_old_price,div_old_price, div_new_price, class_new_price
+    global div_ratio, class_ratio, div_shipping, class_shipping, div_rating, class_rating, div_rating_text, class_rating_text, div_seller_name, class_seller_name, div_seller_point, class_seller_point
     for required_info in data_all_color:
-
-        class_product_name = str(request.GET['class_product_name'])  # productName
-        div_product_name = str(request.GET['div_product_name'])
-        product_name = required_info.find(div_product_name, attrs={"class": class_product_name})  # "h3" 'productName'
-
+        #print("-------")
+        if price_class == 1:
+            div_product_name =  request.POST.get('div_product_name')
+            tag_list.append(div_product_name)
+            class_product_name =  request.POST.get('class_product_name')
+            tag_list.append(class_product_name)
+            div_old_price = request.POST.get('div_old_price')
+            tag_list.append(div_old_price)
+            # old_price = request.GET['del']
+            class_old_price = request.POST.get('class_old_price')
+            tag_list.append(class_old_price)
+            # new_price = request.GET['ins']
+            div_new_price = request.POST.get("div_new_price")
+            tag_list.append(div_new_price)
+            class_new_price = request.POST.get("class_new_price")
+            tag_list.append(class_new_price)
+            #discount ratio ratio = required_info.select('span[class="ratio"]') #ratio
+            div_ratio = request.POST.get("div_ratio")
+            tag_list.append(div_ratio)
+            class_ratio = request.POST.get("class_ratio")
+            tag_list.append(class_ratio)
+            #shipping
+            div_shipping = request.POST.get("div_shipping")
+            tag_list.append(div_shipping)
+            class_shipping = request.POST.get("class_shipping")
+            tag_list.append(class_shipping)
+            #rating point
+            div_rating = request.POST.get("div_rating")
+            tag_list.append(div_rating)
+            class_rating = request.POST.get("class_rating")
+            tag_list.append(class_rating)
+            # rating count index = 12
+            div_rating_text = request.POST.get("div_rating_text")
+            tag_list.append(div_rating_text)
+            class_rating_text = request.POST.get("class_rating_text")
+            tag_list.append(class_rating_text)
+            #seller name 
+            div_seller_name = request.POST.get("div_seller_name")
+            tag_list.append(div_seller_name)
+            class_seller_name = request.POST.get("class_seller_name")
+            tag_list.append(class_seller_name)
+            #seller point
+            div_seller_point = request.POST.get("div_seller_point")
+            tag_list.append(div_seller_point)
+            class_seller_point = request.POST.get("class_seller_point")
+            tag_list.append(class_seller_point)
+        
+        
+        if longer_tags == "1":
+            product_name = required_info.find("h3", attrs={"class": "itemize-title"})  # "n11 longer tags" 'productName
+        else:    
+            # product_name = required_info.find(div_product_name, attrs={"class": class_product_name})  # "h3" 'productName'
+            product_name = required_info.find(tag_list[0], attrs={"class": tag_list[1]})  # "h3" 'productName'
+        
+        #print(price_class,  "product_name=",product_name)
         if product_name is None:
             product_name = required_info.find("h3", attrs={"class": "adGroupProduct"})
-
+            continue
+            #product_name = required_info.select("h3")  # 'del'
+ 
         product_name = product_name.text.strip()
-        # print(product_name)
+        #print(product_name)
         productList.append(product_name)
+        
 
-        # old_price = request.GET['del']
-        class_old_price = request.GET['class_old_price']
-        div_old_price = request.GET['div_old_price']
-        old_price = required_info.select(div_old_price)  # 'del'
+        
+        
+        if store_name == "N11":
+            if longer_tags == "0":
+                old_price = required_info.find(tag_list[2], attrs={"class": tag_list[3]})
+                # old_price = required_info.find(div_old_price, attrs={"class": class_old_price})
+            else:
+                old_price = required_info.find("span", attrs={"class": "itemize-price-old"})
+        elif store_name == "Trendyol":
+            old_price = required_info.find(tag_list[2], attrs={"class": tag_list[3]})#div
+            if old_price is None:
+                old_price = 0.0
+            else:
+                old_price = old_price.text.strip()
+        #print(old_price)
+        old_price_temp = ""
 
-        if old_price == []:
+        if old_price is None:
+            #print("boş old_price liste entered")
+            old_price = 0.0
             old_priceList.append(0.00)
         else:
-            for i in old_price:
-                price = i.get_text()
-                old_price = float(re.split(r'[\"]?([0-9\.]*)[\"]?', price)[1])
-                old_priceList.append(old_price)
-                # print(old_price)
+            if store_name == "N11":
+                if longer_tags == "0": 
+                    for i in old_price:
+                        price = i.get_text()
+                        old_price = float(re.split(r'[\"]?([0-9\.]*)[\"]?', price)[1])
+                else :
+                    old_price = old_price.text.strip()
+                    old_price = old_price.replace(".","")
+                    old_price = old_price.replace(" TL","").replace(",",".")   #44,90 TL
+                    old_price = old_price.replace("TL","")
+                    old_price = float(old_price)
 
-        # new_price = request.GET['ins']
-        div_new_price = request.GET["div_new_price"]
-        class_new_price = request.GET["class_new_price"]
+            elif store_name == "Trendyol":
+                for ch in str(old_price):
+                    if ch.isdigit():
+                        old_price_temp += ch
+                    elif ch == ",":
+                        old_price_temp += "."
+                    old_price = float(old_price_temp)
+                
+            #print("dolu  old_price  liste entered",old_price)
+            old_priceList.append(old_price)
+          
+
+        
         # new_price = required_info.find(div_new_price,attrs={"class":class_new_price})
-        new_price = required_info.find(div_new_price).text.strip()  # 'ins'
+        if store_name == "N11":
+            if longer_tags == "0": 
+                # new_price = required_info.find(div_new_price, attrs={"class": class_new_price})
+                new_price = required_info.find(tag_list[4], attrs={"class": tag_list[5]})
+            else:
+                new_price = required_info.find("p", attrs={"class": "itemize-price-accurate"})
+            
+            #print(new_price)
+            if new_price is not None:
+                new_price = new_price.text.strip()
+                new_price = new_price.replace(".","")
+                new_price = new_price.replace(",",".")
+                new_price = new_price.replace(" ","").replace("\nTL","")
+                new_price = new_price.replace("TL","")
+                new_price = float(new_price)
+                #print(new_price)
+                #print("true new_price list entered",new_price)
+            else:
+                new_price = old_price
+                #print("false new_price list entered",new_price)
+            
+        elif store_name == "Trendyol":
+            
+            new_price_temp = ""
+            new_price = required_info.find(tag_list[4], attrs={"class": tag_list[5]})
+            if new_price is not None:
+                new_price = new_price.text.strip()
+                for ch in str(new_price):
+                    if ch.isdigit():
+                        new_price_temp += ch
+                    elif ch == ",":
+                        new_price_temp += "."
+                new_price = float(new_price_temp)
+                #print("true new_price list entered",new_price)
+            else:
+                #print("false new_price list entered",new_price)
+                new_price = old_price
 
-        new_price = float(re.split(r'[\"]?([0-9\.]*)[\"]?', new_price[:5])[1])
-        new_priceList.append(float(new_price))
-
-        # ratio = required_info.select('span[class="ratio"]') #ratio
-        div_ratio = request.GET["div_ratio"]
-        class_ratio = request.GET["class_ratio"]
-        ratio = required_info.find(div_ratio, attrs={"class": class_ratio})
-
+        new_priceList.append(new_price)
+        #print("old price = ",old_price,"new price = ",str(new_price))
+        
+        
+        
+        ratio = required_info.find(tag_list[6], attrs={"class": tag_list[7]})
+    
         if ratio == None:
             # print("0")
-            ratioList.append(0)
+            if store_name == "N11" and longer_tags == "0":
+                ratioList.append(0)
+            elif store_name == "Trendyol" or (store_name == "N11" and longer_tags == "1"):
+                if old_price == 0.0:
+                    ratioList.append(0)
+                else:
+                    ratioList.append(int(((old_price - new_price)/old_price)*100))  
         else:
-            for i in ratio:
-                # print(i.get_text())
-                ratioList.append(int(i.get_text()))
+            if store_name == "N11":
+                if longer_tags == "0":
+                    for i in ratio:
+                        # print(i.get_text())
+                        ratioList.append(int(i.get_text()))
 
-        # shipping = required_info.select('span[class="textImg freeShipping"]')  #fat span,  textImg freeShipping
-        div_shipping = request.GET["div_shipping"]
-        class_shipping = request.GET["class_shipping"]
-        shipping = required_info.find(div_shipping, attrs={"class": class_shipping})
+        
+        #print(ratioList)
+        #shipping = required_info.select('span[class="textImg freeShipping"]')  #fat span,  textImg freeShipping
+        
+        shipping = required_info.find(tag_list[8], attrs={"class": tag_list[9]})
+        if longer_tags == "1":
+                    shipping = required_info.find("span", attrs={"class": "itemize-cargo-badge itemize-cargo-free"})
+
         if shipping == None:
             # print("no shipping")
             shippingList.append("noShipping")
         else:
             shippingList.append("freeShipping")
 
+        #print(shippingList)
+        
+        #start of the rating_points
         # rating_need = required_info.find('div',attrs={"class":"ratingCont"})  #div  ->  ratingCont
-        div_rating = request.GET["div_rating"]
-        class_rating = request.GET["class_rating"]
-        rating_point = required_info.find(div_rating, attrs={"class": class_rating})
-        tags = []
-        if rating_point is None:
-            # print("no rating")
-            ratingList.append(0)
-        else:
-            point = rating_point.select('span')
-            tags.extend((i.prettify() for i in point))
-            print(tags)
-            result_rating = tags[0]
-            result_rating = result_rating[21:24]
-            if result_rating != "100":
-                result_rating = result_rating[:-1]
-            ratingList.append(int(result_rating))
+        
+        
+        if store_name == "N11":
+            if longer_tags == "0":
+                rating_point = required_info.find(tag_list[10], attrs={"class": tag_list[11]}) #for the sport shoes
+            else:
+                rating_point = required_info.find("i", attrs={"class": "rating_stars--black"}) #for general products
+            tags = []
+            #print(rating_point)
+            if rating_point is None:
+                # print("no rating")
+                ratingList.append(0)
+            else:
+                if longer_tags == "0":
+                    point = rating_point.select('span')
+                    tags.extend((i.prettify() for i in point))
+                    #print(tags)
+                    result_rating = tags[0]
+                    result_rating = result_rating[21:24]
+                    if result_rating != "100":
+                        result_rating = result_rating[:-1]
+                    ratingList.append(int(result_rating))
 
-        div_rating_text = request.GET["div_rating_text"]
-        class_rating_text = request.GET["class_rating_text"]
+                else:
+                    # for item in rating_point:
+                    point = rating_point["style"]
+                    point = point.replace("width: ","")   #width: 90%
+                    point = point.replace("%","")
+                    ratingList.append(int(point))
+                         
+
+        elif store_name == "Trendyol":
+            rating_point = required_info.find(tag_list[10], attrs={"class": tag_list[11]})
+            if rating_point is None:
+                # print("no rating")
+                ratingList.append(0)
+            else:
+                average_point = 0
+                for item in rating_point:
+                    #print("item = ", item)
+                    # print("find = ",item.find("div", attrs={"class": "star"}))
+                    # if item.find("div", attrs={"class": "star"}) is None:
+                    #     print("find = ",item.find("div", attrs={"class": "star"}))
+                    #     continue 
+                    point = 0
+                    # point = item["style"].split(";")
+                    style_class = item.find("div", attrs={"class": "full"}) 
+                    if style_class is None:
+                        break
+                    point = style_class["style"].split(";")
+                    #print("point",point)
+                    point = point[0]
+                    point = point.replace("width:","")
+                    point = point.replace("%","")
+                    average_point += int(point)
+                ratingList.append(average_point//5)
+                #print(average_point//5)
+        #print(ratingList)  
+ 
 
         if rating_point is not None:  # fat   span, ratingText
-            rating_text = required_info.find(div_rating_text, attrs={"class": class_rating_text}).text.strip()
+            rating_text = required_info.find(tag_list[12], attrs={"class": tag_list[13]})  
+            if store_name == "N11":
+                if longer_tags == "0":
+                    rating_text = rating_text.text.strip()
+                    if rating_text[2] == ",":
+                        st = ""
+                        for ch in rating_text:
+                            if ch != ",":
+                                st += ch
+                        rating_text = st
+                    # print(rating_text[1:-1])
+                    rating_textList.append(int(rating_text[1:-1]))
+                if longer_tags == "1":
+                    rating_point = required_info.find("p", attrs={"class": "itemize-star-count"}) 
+                    rating_point = rating_point.text.strip()
+                    rating_point = rating_point.replace("(","").replace(")","").replace(",","")
+                    rating_textList.append(int(rating_point))  
 
-            if rating_text[2] == ",":
-                st = ""
-                for ch in rating_text:
-                    if ch != ",":
-                        st += ch
-                rating_text = st
-            # print(rating_text[1:-1])
-            rating_textList.append(int(rating_text[1:-1]))
+            elif store_name == "Trendyol":
+                rating_text = rating_text.text.strip()
+                rating_text = rating_text.replace("(","")
+                rating_text = rating_text.replace(")","")
+                rating_textList.append(int(rating_text))
         else:
-            rating_textList.append(0)
+            rating_textList.append(0)        
+        #end of the rating count
+        #print(rating_textList)
+       
+        #seller name
+        seller_name = required_info.find(tag_list[14], attrs={"class": tag_list[15]})  # fat   span, sallerName
+        #print(seller_name)
+        if seller_name is not None:
+            seller_name = seller_name.text.strip()
 
-        div_seller_name = request.GET["div_seller_name"]
-        class_seller_name = request.GET["class_seller_name"]
-        seller_name = required_info.find(div_seller_name, attrs={"class": class_seller_name})  # fat   span, sallerName
         if seller_name is None:
-            seller_name = required_info.find('span', attrs={"class": "adGroupSeller"})
-        seller_name = seller_name.text.strip()
+            if store_name == "N11":
+                if longer_tags == "0":
+                    seller_name = required_info.find('span', attrs={"class": "adGroupSeller"})
+                    if seller_name is not None:
+                        seller_name = seller_name.text.strip()
+                    else:
+                        seller_name = "No record"
+                elif longer_tags == "1":
+                    seller_name = product_name.split()
+                    seller_name = seller_name[0]
+            elif store_name == "Trendyol":
+                seller_name = "None"
+        #elif seller_name is not None and store_name == "Trendyol":
+            #seller_name = seller_name.text.strip()
+
         seller_nameList.append(seller_name)
+        #end of the seller name
+        #print(seller_nameList)
+        
+        #seller point
+        seller_point = required_info.find(tag_list[16], attrs={"class": tag_list[17]})  # fat   span, point
+        if store_name == "N11": 
+            if seller_point is not None:
+                if longer_tags == "0":
+                    seller_point = seller_point.text.strip()
+            else:
+                seller_point = "%0" 
+                if longer_tags == "1":
+                    seller_point = ratingList[-1]   
 
-        div_seller_point = request.GET["div_seller_point"]
-        class_seller_point = request.GET["class_seller_point"]
-        seller_point = required_info.find(div_seller_point, attrs={"class": class_seller_point})  # fat   span, point
-        if seller_point is not None:
-            seller_point = seller_point.text.strip()
-        else:
-            seller_point = "%0"
-        seller_pointList.append(seller_point[1:])
-        # print(seller_point)
+            if longer_tags == "0":
+                seller_pointList.append(seller_point[1:])
+            else:
+                seller_pointList.append(seller_point)
 
+        elif store_name == "Trendyol":
+            seller_point = ratingList[-1]
+            seller_pointList.append(seller_point)
+        #print(seller_pointList)
+        #end of the seller name
+
+        #print(productList)    
         price_classList.append(price_class)
-
+        #end of the seller name
+        #en dof the getdata function
 
 def save_to_csv():
     data_headers = ['index', 'product_name', 'new_price', 'old_price', 'discount_ratio', 'shipping', 'rating_point',
@@ -213,6 +469,8 @@ def get_product_list(list):
 
 def find_words():
     global productList
+    if len(productList) > 0 :
+        print("first product name = ",productList[0])
     lower_product_list = productList
     others_list = []
     productListClear = []
@@ -310,7 +568,7 @@ def find_words():
         else:
             table_dict_2[item[0]] = item[1]
 
-        if item[0] == "erkek" or item[0] == "bayan" or item[0] == "çocuk" or item[0] == "kız":
+        if item[0] == "erkek" or item[0] == "bayan" or item[0] == "çocuk" or item[0] == "kız" or item[0] == "unisex":
              man_woman_dict[item[0]] = item[1]
         elif item[0] == "adidas" or item[0] == "nik" or item[0] == "pum" or item[0] == "nik" or  item[0] == "jump" or item[0] == "kinetix" or item[0] == "lumberjack" or item[0] == "slazenger":
              brand_dict[item[0]] = item[1]
@@ -327,10 +585,10 @@ def find_words():
 
         counter += 1
 
-    print(man_woman_dict)
-    print(brand_dict)
-    print(sport_dict)
-    print(color_dict)
+    #print(man_woman_dict)
+    #print(brand_dict)
+    # print(sport_dict)
+    # print(color_dict)
 
 
     return table_dict_1, table_dict_2, man_woman_dict, brand_dict, sport_dict, color_dict

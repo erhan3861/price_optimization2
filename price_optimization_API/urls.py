@@ -21,6 +21,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     #path('v1/api/', include('api.urls')),
@@ -32,6 +33,10 @@ urlpatterns = [
     path('result/', views.result, name='result'),
     path('data/', views.get_data, name='get_data'),
     path('getfile/', views.getfile, name='getfile'),
+    path('set_store/', views.set_store, name='set_store'),
+    path('help/', views.help, name='help'),
+
+    
 ] 
 
 urlpatterns += staticfiles_urlpatterns()

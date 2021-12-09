@@ -3,10 +3,11 @@ import pandas as pd
 
 import price_optimization_API
 from .apps import ApiConfig
-from .data import find_words, getPriceFeatures, save_to_csv, reset_all_the_list, get_product_list,find_words
+from .data import url, find_words, getPriceFeatures, save_to_csv, reset_all_the_list, get_product_list,find_words
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import render, HttpResponse
+from django.http import JsonResponse
 from django.contrib import messages
 from price_optimization_API import settings
 
@@ -27,6 +28,10 @@ sc = StandardScaler()
 #global vars
 price_ranges = "50"
 num_class = "10"
+product_url = ""
+store_name = "n11"
+price_class = 0
+store_list = []
 
 
 # our home page view
@@ -38,16 +43,31 @@ def predict(request):
     return render(request, 'index.html', {})
 
 
+def help(request):
+    return render(request, 'help.html', {})
+
+
+#set the store 
+def set_store(request):
+     global product_url,store_name
+     #store_name = request.GET.get('store_name', "N11")
+     #product_url = request.GET.get('product_url', "N11")
+     print(store_name)
+     return render(request, 'index_data.html', {})
+
+
 # our result page view
 
 def result(request):
     # ML_function()
     
-    price_class = int(request.POST.get('is_private', "10"))
+    price_class = int(request.POST.get('price_class'))
     shipping = int(request.POST.get('shipping',"0"))
     rating_point = int(request.POST.get('rating_point',"50"))
     rating_number = int(request.POST.get('rating_number',"10"))
     seller_point = int(request.POST.get('seller_point',"50"))
+
+    print(str(price_class),",",str(shipping),"",str(rating_point),",",str(rating_number),",",str(seller_point))
 
     result = getPrediction(shipping, rating_point, rating_number, seller_point, price_class, request)
     
@@ -84,22 +104,101 @@ def getPrediction(shipping, rating_point, rating_number, seller_point, price_cla
     return prediction
 
 
+
+def continue_get_data(request, class_value, store_name, product_url, price_class):
+    global price_ranges 
+
+
+    if class_value == "34":
+        num_class = 3
+    elif class_value == "56":
+        num_class = 5
+    elif class_value == "78":
+        num_class = 7
+    elif class_value == "910":
+        num_class = 9
+
+    for i in range(num_class-1, num_class+1, 1):
+        print((i), ".class 2nd side", store_name, product_url)
+        price_class += 1
+        for j in range(1, 11, 1):
+            # we are visiting all the desired pages
+            print("     ", j, ".page")
+            if(store_name == "N11"):
+                getPriceFeatures(request, store_name, 
+                                product_url +"&srt=SALES_VOLUME&minp=" + str(
+                                    i * price_ranges) + "&maxp=" + str(
+                                    i * price_ranges + price_ranges) + "&ref=auto&pg=" + str(j), price_class)
+            elif(store_name == "Gittigidiyor"):
+                # addition = &fmax=100&fmin=50&sf=2
+                getPriceFeatures(request, store_name,
+                                product_url +"&fmax="+str(
+                                    i * price_ranges + price_ranges)
+                                    + "&fmin=" + str(
+                                    i * price_ranges) + "&sf=" + str(j), price_class)
+            
+            elif(store_name == "Trendyol"):
+                # addition = &fmax=100&fmin=50&sf=2
+                getPriceFeatures(request, store_name,
+                                product_url +"&prc="+str(
+                                    i * price_ranges)
+                                    + "-" + str(
+                                    i * price_ranges + price_ranges) + "&pi=" + str(j), price_class)
+    store_list[2] = price_class
+    save_to_csv()
+    return price_class
+
+
+
 # get the dataset from the website
 def get_data(request):
     # price classes are : 0-49 TL  50-99 TL ..... 450-499 TL
-    price_class = 0
+    
+   
     #clear all the lists for getting new csv file
-    reset_all_the_list()
+    class_value = request.POST.get('sub_class_name')
+    print("class_value = ", class_value,  "store_list = ",store_list)
+
+    if class_value == "12":
+        reset_all_the_list(store_list)
+        price_class = 0
+    elif class_value != "12":
+        product_url = store_list[0]
+        store_name = store_list[1]
+        price_class = store_list[2]
+        print("price_class=", price_class,"product_url=",product_url,"-","store_name",store_name, "last_class",store_list[3] )
+        last_price_class = continue_get_data(request, class_value, store_name, product_url, price_class)
+        if last_price_class != store_list[3]:  
+            contex = {
+            "info_for_radio_btn" : "Class  "+ str(last_price_class-1) +" - "+str(last_price_class)+" finished.Click  "
+            +str(str(last_price_class//2+1))+ " radio button then GET VALUES button."
+            }
+        else:
+            print(store_list[3])
+            contex = {
+            "info_for_radio_btn" : "Class  "+ str(last_price_class-1) +" - "+str(last_price_class)
+            +"finished \n Click  RED TRAIN BUTTON at the up for training"
+            }
+        return render(request, 'index_data.html', contex)
+  
+    #store_name = request.GET['store_name']
+    #product_url = request.GET['product_url']
+    store_name = request.POST.get('store_name')
+    product_url = request.POST.get('product_url')
+    print(store_name,"pr-name= ",product_url)
+    
+    store_list.append(product_url)
+    store_list.append(store_name)
     
     global num_class,price_ranges
-    num_class = request.GET['number_class']
-    price_ranges = request.GET['price_ranges']
+    total_num_class = request.POST.get('number_class')
+    price_ranges = request.POST.get('price_ranges')
 
     print("num_class=",num_class)
     print("price_ranges=",price_ranges)
 
 
-    if num_class == '':
+    if total_num_class == '':
         message_type = "warning"
         messages.warning(request, "Your class number is blank")
         return render(request, 'index_data.html', {})
@@ -111,23 +210,47 @@ def get_data(request):
         message_type = "success"
         messages.success(request, "Your submit is succesful and you have e-commerce values")
 
+    if class_value == "12":
+        num_class = 1
+
+
     num_class = int(num_class)
     price_ranges = int(price_ranges)
 
-    for i in range(num_class):
+    for i in range(num_class-1, num_class+1, 1):
         print((i + 1), ".class")
         price_class += 1
         for j in range(1, 11, 1):
             # we are visiting all the desired pages
             print("     ", j, ".page")
-            getPriceFeatures(request,
-                             "https://www.n11.com/spor-giyim-ve-ayakkabi/spor-ayakkabi?q=spor+ayakkab%C4%B1&srt=SALES_VOLUME&minp=" + str(
-                                 i * price_ranges) + "&maxp=" + str(
-                                 i * price_ranges + price_ranges) + "&ref=auto&pg=" + str(j), price_class)
+            if(store_name == "N11"):
+                getPriceFeatures(request, store_name, 
+                                product_url +"&srt=SALES_VOLUME&minp=" + str(
+                                    i * price_ranges) + "&maxp=" + str(
+                                    i * price_ranges + price_ranges) + "&ref=auto&pg=" + str(j), price_class)
+            elif(store_name == "Gittigidiyor"):
+                # addition = &fmax=100&fmin=50&sf=2
+                getPriceFeatures(request, store_name,
+                                product_url +"&fmax="+str(
+                                    i * price_ranges + price_ranges)
+                                    + "&fmin=" + str(
+                                    i * price_ranges) + "&sf=" + str(j), price_class)
+            
+            elif(store_name == "Trendyol"):
+                # addition = &fmax=100&fmin=50&sf=2
+                getPriceFeatures(request, store_name,
+                                product_url +"&prc="+str(
+                                    i * price_ranges)
+                                    + "-" + str(
+                                    i * price_ranges + price_ranges) + "&pi=" + str(j), price_class)
+    store_list.append(price_class)
+    store_list.append(int(total_num_class))
+    
 
     # function for saving the data to csv file
     save_to_csv()
-    return render(request, 'index_data.html', {})
+    contex = {"info_for_radio_btn":" Class 1-2 ready. \n Click 2nd radio button"}
+    return render(request, 'index_data.html', contex)
 
 
 import csv
@@ -161,21 +284,33 @@ def ML_function(request):
     print("here...",request.POST)
 
     global price_ranges
-    if request.POST['valid_price_class'] is not '':
+    if request.POST['valid_price_class'] is not ['']:
         price_ranges = request.POST['valid_price_class']
+        store_text = request.POST['valid_store_name']
+    else :
+        df = pd.read_csv("./api/price_dynamics.csv")
 
-    print("type0=",type(price_ranges),"   price_ranges = ",price_ranges)
+    print("type0=",type(price_ranges),"   price_ranges = ",price_ranges,"store_text",store_text )
 
     
-    if str(price_ranges) == '25':
+    if str(price_ranges) == '25' and store_text=='N11':
         df = pd.read_csv("./api/price_dynamics_25.csv")
-    elif str(price_ranges) == '50':
+    elif str(price_ranges) == '25' and store_text=='Trendyol':
+        df = pd.read_csv("./api/price_dynamics_25_T.csv")
+    elif str(price_ranges) == '50'and store_text=='N11':
         df = pd.read_csv("./api/price_dynamics_50.csv")
-    elif str(price_ranges) == '75':
+    elif str(price_ranges) == '50' and store_text=='Trendyol':
+        df = pd.read_csv("./api/price_dynamics_50_T.csv")   
+    elif str(price_ranges) == '75'and store_text=='N11':
         df = pd.read_csv("./api/price_dynamics_75.csv")
-    elif str(price_ranges) == '100':
+    elif str(price_ranges) == '75' and store_text=='Trendyol':
+        df = pd.read_csv("./api/price_dynamics_75_T.csv")  
+    elif str(price_ranges) == '100'and store_text=='N11':
         df = pd.read_csv("./api/price_dynamics_100.csv")
+    elif str(price_ranges) == '100' and store_text=='Trendyol':
+        df = pd.read_csv("./api/price_dynamics_100_T.csv")  
     else:
+        print("df get values is entered")
         df = pd.read_csv("./api/price_dynamics.csv")
     
     # D:\price_optimization\price_dynamics2.csv
@@ -197,8 +332,6 @@ def ML_function(request):
     rating_number = []
     discount_ratio = []
     seller_point = []
-
-    print(df.head())
 
     # veri kümesi
     # shipping,rating_point,rating_number,seller_point,price_class
@@ -255,9 +388,6 @@ def ML_function(request):
     
 
     return render(request, 'index.html', {})
-
-
-
 
 
 

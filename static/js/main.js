@@ -33,7 +33,6 @@ function addObject(event) {
 
 
 
-
 // $(document).ready(function(){
 //   $("#btn_getValues").click(function(){
 //     $("spinner").fadeToggle(3000);
