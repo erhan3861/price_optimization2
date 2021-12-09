@@ -19,6 +19,7 @@ from wsgiref.util import FileWrapper
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 
 from sklearn.preprocessing import StandardScaler
+from urllib.parse import unquote
 
 sc = StandardScaler()
 
@@ -73,6 +74,14 @@ def result(request):
     
     most_words_1, most_words_2, man_woman_dict, brand_dict, sport_dict, color_dict = find_words()
 
+    #get the product from url
+    product = store_list[0]
+    product = unquote(product)
+    product.index('=')
+    product.index('&')
+
+    print(product)
+
     context = {
         'result': result[0],
         'most_words_1':most_words_1, 
@@ -81,6 +90,7 @@ def result(request):
         'brand_dict': brand_dict, 
         'sport_dict' : sport_dict, 
         'color_dict' : color_dict,
+        'product' : product,
     }
     return render(request, 'result.html', context)
     # return render(request, 'result.html', {'result': result[0],'most_words_1':most_words_1, 'most_words_2':most_words_2})
@@ -177,7 +187,7 @@ def get_data(request):
             print(store_list[3])
             contex = {
             "info_for_radio_btn" : "Class  "+ str(last_price_class-1) +" - "+str(last_price_class)
-            +"finished \n Click  RED TRAIN BUTTON at the up for training"
+            +"finished \n Click  RED TRAIN BUTTON on the up for training"
             }
         return render(request, 'index_data.html', contex)
   
