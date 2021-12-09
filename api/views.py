@@ -37,7 +37,10 @@ store_list = []
 
 # our home page view
 def home(request):
-    return render(request, 'index_data.html', {})
+    context = {
+            "info_for_radio_btn" : "Choose radio button 1 and then GET VALUES button."
+            }
+    return render(request, 'index_data.html', context)
 
 
 def predict(request):
@@ -75,12 +78,15 @@ def result(request):
     most_words_1, most_words_2, man_woman_dict, brand_dict, sport_dict, color_dict = find_words()
 
     #get the product from url
-    product = store_list[0]
-    product = unquote(product)
-    product.index('=')
-    product.index('&')
-
-    print(product)
+    if len(store_list) > 0:
+        product = store_list[0]
+        product.index('=')
+        product.index('&')
+        product = product[product.index('=')+1:product.index('&')]
+        product = unquote(product)
+    else:
+        product = "spor ayakkabı"
+    print("product = ",product)
 
     context = {
         'result': result[0],
@@ -179,17 +185,17 @@ def get_data(request):
         print("price_class=", price_class,"product_url=",product_url,"-","store_name",store_name, "last_class",store_list[3] )
         last_price_class = continue_get_data(request, class_value, store_name, product_url, price_class)
         if last_price_class != store_list[3]:  
-            contex = {
+            context = {
             "info_for_radio_btn" : "Class  "+ str(last_price_class-1) +" - "+str(last_price_class)+" finished.Click  "
             +str(str(last_price_class//2+1))+ " radio button then GET VALUES button."
             }
         else:
             print(store_list[3])
-            contex = {
+            context = {
             "info_for_radio_btn" : "Class  "+ str(last_price_class-1) +" - "+str(last_price_class)
             +"finished \n Click  RED TRAIN BUTTON on the up for training"
             }
-        return render(request, 'index_data.html', contex)
+        return render(request, 'index_data.html', context)
   
     #store_name = request.GET['store_name']
     #product_url = request.GET['product_url']
