@@ -80,6 +80,7 @@ def result(request):
     #get the product from url
     if len(store_list) > 0:
         product = store_list[0]
+        product += '&'
         product.index('=')
         product.index('&')
         product = product[product.index('=')+1:product.index('&')]
