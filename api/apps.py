@@ -11,3 +11,4 @@ class ApiConfig(AppConfig):
     with warnings.catch_warnings():
       warnings.simplefilter("ignore", category=UserWarning)
       model = joblib.load(MODEL_FILE)
+

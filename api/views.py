@@ -1,12 +1,14 @@
 import numpy as np
 import pandas as pd
 
+
 import price_optimization_API
 from .apps import ApiConfig
 from .data import url, find_words, getPriceFeatures, save_to_csv, reset_all_the_list, get_product_list,find_words
+from .future import get_time_series_data
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import get_object_or_404, render, HttpResponse
 from django.http import JsonResponse
 from django.contrib import messages
 from price_optimization_API import settings
@@ -23,8 +25,35 @@ from urllib.parse import unquote
 
 sc = StandardScaler()
 
-#for nltk issues
+#for db issues
+from django.views import generic
+from .models import Post
 
+
+
+class PostList(generic.ListView):
+    queryset = Post.objects.filter(status=1).order_by('-created_on')
+    # product = Post(title='deneme',status = 1)
+    # product.save()
+    template_name = 'help.html'
+    
+        
+
+class PostDetail(generic.DetailView):
+    model = Post
+    template_name = 'post_detail.html'
+
+
+class PostListUpdated(generic.ListView):
+    queryset = Post.objects.filter(status=1).order_by('-created_on')
+    # product = Post(title='deneme',status = 1)
+    # product.save()
+
+    def get(self, request):
+        get_time_series_data(request)
+        return render(request, 'future.html', {})
+
+    template_name = 'future.html'
 
 #global vars
 price_ranges = "50"
@@ -47,7 +76,17 @@ def predict(request):
     return render(request, 'index.html', {})
 
 
+def future(request):
+    return render(request, 'future.html', {})
+
+def get_time_series(request):
+    get_time_series_data(request)
+    return render(request, 'future.html', {})
+        
+
 def help(request):
+    for i in range(5):
+        Post.objects.filter(id=1).update(title='deneme'+str(i))
     return render(request, 'help.html', {})
 
 

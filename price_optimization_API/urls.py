@@ -34,9 +34,14 @@ urlpatterns = [
     path('data/', views.get_data, name='get_data'),
     path('getfile/', views.getfile, name='getfile'),
     path('set_store/', views.set_store, name='set_store'),
-    path('help/', views.help, name='help'),
-
-    
+    path('future/', views.future, name='future'),
+    path('future2/', views.get_time_series, name='get_time_series'),
+    path('help/', views.help, name='help'), 
+    path('future/help/', views.help, name='help'),
+    path('help2/', views.PostList.as_view(), name='help2'),
+    #path('future2/', views.PostListUpdated.as_view(), name='get_time_series'),
+    #path('help2/', views.update_data, name='help2'),
+    path('<slug:slug>/', views.PostDetail.as_view(), name='post_detail'), 
 ] 
 
 urlpatterns += staticfiles_urlpatterns()
